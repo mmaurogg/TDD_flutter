@@ -1,17 +1,34 @@
 class Habit {
-  String? title;
-  bool isCompleted;
-  DateTime? completedAt;
+  final int id;
+  final String title;
+  final bool isCompleted;
+  final DateTime? completedAt;
 
-  Habit({this.title, this.isCompleted = false, this.completedAt});
+  Habit({
+    required this.id,
+    required this.title,
+    this.isCompleted = false,
+    this.completedAt,
+  });
 
-  void toggleCompleted() {
-    isCompleted = !isCompleted;
+  Habit copyWith({
+    int? id,
+    String? title,
+    bool? isCompleted,
+    DateTime? completedAt,
+  }) {
+    return Habit(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      isCompleted: isCompleted ?? this.isCompleted,
+      completedAt: completedAt ?? this.completedAt,
+    );
+  }
 
-    if (isCompleted) {
-      completedAt = DateTime.now();
-    } else {
-      completedAt = null;
-    }
+  Habit toggle() {
+    return copyWith(
+      isCompleted: !isCompleted,
+      completedAt: isCompleted ? null : DateTime.now(),
+    );
   }
 }
