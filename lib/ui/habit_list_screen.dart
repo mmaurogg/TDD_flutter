@@ -62,7 +62,7 @@ class HabitListController {
 
   void onAddHabit() {
     id = ++id;
-    final newHabit = Habit(id: id, title: "title $id");
+    final newHabit = Habit(id: id, title: "titulo $id");
     habitList.add(newHabit);
     _habitListStreamController.add(habitList);
   }
