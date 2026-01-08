@@ -21,7 +21,7 @@ class Habit {
       id: id ?? this.id,
       title: title ?? this.title,
       isCompleted: isCompleted ?? this.isCompleted,
-      completedAt: completedAt ?? this.completedAt,
+      completedAt: completedAt,
     );
   }
 

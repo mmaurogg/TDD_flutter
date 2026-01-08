@@ -17,29 +17,64 @@ class HabitListScreen extends StatelessWidget {
       ),
       body: StreamBuilder<List<Habit>>(
         stream: habitListController.habitListStream,
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
+        builder: (context, snapshotHabitList) {
+          if (snapshotHabitList.data == null) {
             return const Center(child: Text("Agrega un habito"));
           }
 
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final habit = snapshot.data![index];
-              return Padding(
-                padding: EdgeInsetsGeometry.all(8),
-                child: ListTile(
-                  title: Text(habit.title),
-                  trailing: Switch(
-                    key: Key("habit_switch_${habit.id}"),
-                    value: habit.isCompleted,
-                    onChanged: (value) {
-                      habitListController.updateHabit(habit);
-                    },
-                  ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StreamBuilder<Set<FilterType>>(
+                stream: habitListController.selectedValueStream,
+                builder: (context, snapshotSelected) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: SegmentedButton(
+                      segments: [
+                        const ButtonSegment(
+                          value: FilterType.all,
+                          label: Text("Todos"),
+                        ),
+                        const ButtonSegment(
+                          value: FilterType.completed,
+                          label: Text("Completados"),
+                        ),
+                        const ButtonSegment(
+                          value: FilterType.incomplete,
+                          label: Text("Incompletos"),
+                        ),
+                      ],
+                      selected: snapshotSelected.data ?? {FilterType.all},
+                      onSelectionChanged: (a) {
+                        habitListController.selectedValue = a;
+                      },
+                    ),
+                  );
+                },
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: snapshotHabitList.data!.length,
+                  itemBuilder: (context, index) {
+                    final habit = snapshotHabitList.data![index];
+                    return Padding(
+                      padding: EdgeInsetsGeometry.all(8),
+                      child: ListTile(
+                        title: Text(habit.title),
+                        trailing: Switch(
+                          key: Key("habit_switch_${habit.id}"),
+                          value: habit.isCompleted,
+                          onChanged: (value) {
+                            habitListController.updateHabit(habit);
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ],
           );
         },
       ),
@@ -52,13 +87,48 @@ class HabitListScreen extends StatelessWidget {
   }
 }
 
+enum FilterType { all, completed, incomplete }
+
 class HabitListController {
+  HabitListController() {
+    selectedValueStream.listen((value) {
+      switch (value.first) {
+        case FilterType.all:
+          _habitListStreamController.add(habitList);
+          break;
+        case FilterType.completed:
+          final filtered = habitList
+              .where((element) => element.isCompleted)
+              .toList();
+          _habitListStreamController.add(filtered);
+          break;
+
+        case FilterType.incomplete:
+          final filtered = habitList
+              .where((element) => !element.isCompleted)
+              .toList();
+          _habitListStreamController.add(filtered);
+          break;
+      }
+    });
+  }
+
   int id = 0;
   final habitList = <Habit>[];
   final StreamController<List<Habit>> _habitListStreamController =
       StreamController<List<Habit>>.broadcast();
 
-  get habitListStream => _habitListStreamController.stream;
+  final StreamController<Set<FilterType>> _selectedValueStreamController =
+      StreamController.broadcast();
+
+  Stream<List<Habit>> get habitListStream => _habitListStreamController.stream;
+
+  Stream<Set<FilterType>> get selectedValueStream =>
+      _selectedValueStreamController.stream;
+
+  set selectedValue(Set<FilterType> value) {
+    _selectedValueStreamController.add(value);
+  }
 
   void onAddHabit() {
     id = ++id;
