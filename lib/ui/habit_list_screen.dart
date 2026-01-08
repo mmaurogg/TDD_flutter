@@ -91,26 +91,7 @@ enum FilterType { all, completed, incomplete }
 
 class HabitListController {
   HabitListController() {
-    selectedValueStream.listen((value) {
-      switch (value.first) {
-        case FilterType.all:
-          _habitListStreamController.add(habitList);
-          break;
-        case FilterType.completed:
-          final filtered = habitList
-              .where((element) => element.isCompleted)
-              .toList();
-          _habitListStreamController.add(filtered);
-          break;
-
-        case FilterType.incomplete:
-          final filtered = habitList
-              .where((element) => !element.isCompleted)
-              .toList();
-          _habitListStreamController.add(filtered);
-          break;
-      }
-    });
+    selectedValueStream.listen(_filterHabits);
   }
 
   int id = 0;
@@ -142,5 +123,26 @@ class HabitListController {
     final indexHabit = habitList.indexOf(habit);
     habitList[indexHabit] = updatedHabit;
     _habitListStreamController.add(habitList);
+  }
+
+  void _filterHabits(Set<FilterType> value) {
+    switch (value.first) {
+      case FilterType.all:
+        _habitListStreamController.add(habitList);
+        break;
+      case FilterType.completed:
+        final filtered = habitList
+            .where((element) => element.isCompleted)
+            .toList();
+        _habitListStreamController.add(filtered);
+        break;
+
+      case FilterType.incomplete:
+        final filtered = habitList
+            .where((element) => !element.isCompleted)
+            .toList();
+        _habitListStreamController.add(filtered);
+        break;
+    }
   }
 }
