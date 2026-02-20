@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:habit_tracker/data/local_data_source.dart';
+import 'package:shared_preferences/src/shared_preferences_async.dart';
 
 class MockLocalDataSourceSuccess implements LocalDataSource {
   @override
@@ -23,6 +24,13 @@ class MockLocalDataSourceSuccess implements LocalDataSource {
 ''';
     return Future.value(jsonString);
   }
+
+  @override
+  Future<void> set(String jsonString) async {}
+
+  @override
+  // TODO: implement prefs
+  SharedPreferencesAsync get prefs => throw UnimplementedError();
 }
 
 class MockLocalDataSourceError implements LocalDataSource {
@@ -30,4 +38,13 @@ class MockLocalDataSourceError implements LocalDataSource {
   Future<String?> get() {
     throw SocketException("Error");
   }
+
+  @override
+  Future<void> set(String jsonString) {
+    throw SocketException("Error");
+  }
+
+  @override
+  // TODO: implement prefs
+  SharedPreferencesAsync get prefs => throw UnimplementedError();
 }

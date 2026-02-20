@@ -22,4 +22,16 @@ void main() {
 
     expect(dataSource.load(), throwsException);
   });
+
+  /*   test("salva en la base de datos local", () async {
+    HabitDataSource dataSource = HabitDataSource(
+      localDataSource: MockLocalDataSourceError(),
+    );
+
+    final habits = <Habit>[];
+
+    await dataSource.save(habits);
+
+    expect(actual, matcher)
+  }); */
 }

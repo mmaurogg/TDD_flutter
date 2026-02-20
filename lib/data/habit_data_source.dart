@@ -14,7 +14,6 @@ class HabitDataSource implements HabitRepository {
     late String? result;
 
     try {
-      localDataSource.get();
       result = await localDataSource.get();
     } catch (e) {
       throw Exception();
@@ -28,8 +27,12 @@ class HabitDataSource implements HabitRepository {
   }
 
   @override
-  Future<void> save(List<Habit> habits) {
-    // TODO: implement save
-    throw UnimplementedError();
+  Future<void> save(List<Habit> habits) async {
+    try {
+      final jsonString = jsonEncode(habits);
+      await localDataSource.set(jsonString);
+    } catch (e) {
+      throw Exception();
+    }
   }
 }
