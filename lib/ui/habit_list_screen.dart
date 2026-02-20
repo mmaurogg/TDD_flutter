@@ -90,12 +90,10 @@ class HabitListScreen extends StatelessWidget {
 enum FilterType { all, completed, incomplete }
 
 class HabitListController {
-  HabitListController() {
-    selectedValueStream.listen(_filterHabits);
-  }
-
   int id = 0;
   final habitList = <Habit>[];
+  FilterType filterValue = FilterType.all;
+
   final StreamController<List<Habit>> _habitListStreamController =
       StreamController<List<Habit>>.broadcast();
 
@@ -109,24 +107,26 @@ class HabitListController {
 
   set selectedValue(Set<FilterType> value) {
     _selectedValueStreamController.add(value);
+    filterValue = value.first;
+    _streamHabits();
   }
 
   void onAddHabit() {
     id = ++id;
     final newHabit = Habit(id: id, title: "titulo $id");
     habitList.add(newHabit);
-    _habitListStreamController.add(habitList);
+    _streamHabits();
   }
 
   void updateHabit(Habit habit) {
     final updatedHabit = habit.toggle();
     final indexHabit = habitList.indexOf(habit);
     habitList[indexHabit] = updatedHabit;
-    _habitListStreamController.add(habitList);
+    _streamHabits();
   }
 
-  void _filterHabits(Set<FilterType> value) {
-    switch (value.first) {
+  void _streamHabits() {
+    switch (filterValue) {
       case FilterType.all:
         _habitListStreamController.add(habitList);
         break;

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Habit {
   final int id;
   final String title;
@@ -22,6 +24,17 @@ class Habit {
       title: title ?? this.title,
       isCompleted: isCompleted ?? this.isCompleted,
       completedAt: completedAt,
+    );
+  }
+
+  factory Habit.fromJson(Map<String, dynamic> json) {
+    return Habit(
+      id: json['id'],
+      title: json['title'],
+      isCompleted: json['isCompleted'],
+      completedAt: json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'])
+          : null,
     );
   }
 
