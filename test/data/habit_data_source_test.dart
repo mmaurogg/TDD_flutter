@@ -23,15 +23,24 @@ void main() {
     expect(dataSource.load(), throwsException);
   });
 
-  /*   test("salva en la base de datos local", () async {
+  test("salva en la base de datos local", () async {
     HabitDataSource dataSource = HabitDataSource(
       localDataSource: MockLocalDataSourceError(),
     );
 
     final habits = <Habit>[];
 
+    final newHabit = Habit(id: 0, title: "new habit");
+
+    habits.add(newHabit);
+
     await dataSource.save(habits);
 
-    expect(actual, matcher)
-  }); */
+    final habitData = await dataSource.load();
+
+    final habit = habitData.single;
+
+    expect(habit.id, newHabit.id);
+    expect(habit.title, newHabit.title);
+  });
 }

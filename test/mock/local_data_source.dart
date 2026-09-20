@@ -4,9 +4,7 @@ import 'package:habit_tracker/data/local_data_source.dart';
 import 'package:shared_preferences/src/shared_preferences_async.dart';
 
 class MockLocalDataSourceSuccess implements LocalDataSource {
-  @override
-  Future<String?> get() {
-    final jsonString = '''
+  String habitsJson = '''
 [
   {
     "id": 1,
@@ -22,11 +20,16 @@ class MockLocalDataSourceSuccess implements LocalDataSource {
   }
 ]
 ''';
-    return Future.value(jsonString);
+
+  @override
+  Future<String?> get() {
+    return Future.value(habitsJson);
   }
 
   @override
-  Future<void> set(String jsonString) async {}
+  Future<void> set(String jsonString) async {
+    habitsJson = jsonString;
+  }
 
   @override
   // TODO: implement prefs
