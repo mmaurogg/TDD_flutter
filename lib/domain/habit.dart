@@ -38,6 +38,15 @@ class Habit {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'isCompleted': isCompleted,
+      'completedAt': completedAt?.toIso8601String(),
+    };
+  }
+
   Habit toggle() {
     return copyWith(
       isCompleted: !isCompleted,

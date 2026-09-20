@@ -22,14 +22,10 @@ class MockLocalDataSourceSuccess implements LocalDataSource {
 ''';
 
   @override
-  Future<String?> get() {
-    return Future.value(habitsJson);
-  }
+  Future<String?> get() => Future.value(habitsJson);
 
   @override
-  Future<void> set(String jsonString) async {
-    habitsJson = jsonString;
-  }
+  Future<void> set(String jsonString) async => habitsJson = jsonString;
 
   @override
   // TODO: implement prefs

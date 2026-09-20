@@ -28,8 +28,9 @@ class HabitDataSource implements HabitRepository {
 
   @override
   Future<void> save(List<Habit> habits) async {
+    final habitMap = habits.map((e) => e.toJson()).toList();
     try {
-      final jsonString = jsonEncode(habits);
+      final jsonString = jsonEncode(habitMap);
       await localDataSource.set(jsonString);
     } catch (e) {
       throw Exception();

@@ -25,7 +25,7 @@ void main() {
 
   test("salva en la base de datos local", () async {
     HabitDataSource dataSource = HabitDataSource(
-      localDataSource: MockLocalDataSourceError(),
+      localDataSource: MockLocalDataSourceSuccess(),
     );
 
     final habits = <Habit>[];
