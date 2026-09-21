@@ -1,15 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/data/local_data_source.dart';
+import 'package:habit_tracker/data/habit_data_source.dart';
 import 'package:habit_tracker/domain/habit.dart';
 
 class HabitListScreen extends StatelessWidget {
-  HabitListScreen({super.key});
-
-  final habitListController = HabitListController();
+  final HabitDataSource? dataSource;
+  const HabitListScreen({super.key, this.dataSource});
 
   @override
   Widget build(BuildContext context) {
+    final habitListController = HabitListController(
+      habitDataSource: dataSource,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habit List'),
@@ -18,7 +23,7 @@ class HabitListScreen extends StatelessWidget {
       body: StreamBuilder<List<Habit>>(
         stream: habitListController.habitListStream,
         builder: (context, snapshotHabitList) {
-          if (snapshotHabitList.data == null) {
+          if ((snapshotHabitList.data ?? []).isEmpty) {
             return const Center(child: Text("Agrega un habito"));
           }
 
@@ -94,6 +99,12 @@ class HabitListController {
   final habitList = <Habit>[];
   FilterType filterValue = FilterType.all;
 
+  final HabitDataSource? habitDataSource;
+
+  HabitListController({this.habitDataSource}) {
+    init();
+  }
+
   final StreamController<List<Habit>> _habitListStreamController =
       StreamController<List<Habit>>.broadcast();
 
@@ -111,11 +122,26 @@ class HabitListController {
     _streamHabits();
   }
 
+  void init() async {
+    final habits = await habitDataSource?.load();
+
+    if (habits != null) {
+      habitList.addAll(habits);
+      _streamHabits();
+    }
+  }
+
+  void saveData() {
+    if (habitDataSource == null) return;
+    habitDataSource!.save(habitList);
+  }
+
   void onAddHabit() {
     id = ++id;
     final newHabit = Habit(id: id, title: "titulo $id");
     habitList.add(newHabit);
     _streamHabits();
+    saveData();
   }
 
   void updateHabit(Habit habit) {
@@ -123,6 +149,7 @@ class HabitListController {
     final indexHabit = habitList.indexOf(habit);
     habitList[indexHabit] = updatedHabit;
     _streamHabits();
+    saveData();
   }
 
   void _streamHabits() {

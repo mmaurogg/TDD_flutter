@@ -43,4 +43,12 @@ void main() {
     expect(habit.id, newHabit.id);
     expect(habit.title, newHabit.title);
   });
+
+  test("falla salvar en la base de datos local", () async {
+    HabitDataSource dataSource = HabitDataSource(
+      localDataSource: MockLocalDataSourceError(),
+    );
+
+    expect(dataSource.save([]), throwsException);
+  });
 }

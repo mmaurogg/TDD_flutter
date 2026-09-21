@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/data/habit_data_source.dart';
+import 'package:habit_tracker/data/local_data_source.dart';
 import 'package:habit_tracker/ui/habit_list_screen.dart';
 
 void main() {
@@ -16,7 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HabitListScreen(),
+      home: HabitListScreen(
+        dataSource: HabitDataSource(localDataSource: LocalDataSource()),
+      ),
     );
   }
 }

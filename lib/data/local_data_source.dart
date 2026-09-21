@@ -3,16 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalDataSource {
   static const String key = "habits";
 
-  LocalDataSource({required this.prefs});
+  LocalDataSource({SharedPreferencesAsync? prefs})
+    : _prefs = prefs ?? SharedPreferencesAsync();
 
-  final SharedPreferencesAsync prefs;
+  final SharedPreferencesAsync _prefs;
 
   Future<String?> get() async {
-    final result = await prefs.getString(key);
+    final result = await _prefs.getString(key);
     return result;
   }
 
   Future<void> set(String jsonString) async {
-    await prefs.setString(key, jsonString);
+    await _prefs.setString(key, jsonString);
   }
 }
